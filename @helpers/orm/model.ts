@@ -28,13 +28,13 @@ export default class Model {
         return this;
     }
 
-    where(left: string, operator: string, right: string|number) {
+    where(left: string, operator: string, right: string|number|null) {
        this.whereClause.push(`${left} ${operator} ${right}`);
 
        return this;
     }
 
-    find(id: number|string) {
+    find(id: number) {
         return this.where(this.primaryKey, '=', id);
     }
 

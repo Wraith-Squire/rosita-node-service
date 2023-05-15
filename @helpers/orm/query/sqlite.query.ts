@@ -60,7 +60,17 @@ export default class SqliteQuery implements Query {
         if (clauses.selectClause.length > 0) query += `SELECT ${clauses.selectClause.toString()} FROM ${clauses.table} `;
         else query += `SELECT * FROM ${clauses.table} `;
 
-        if (clauses.whereClause.length > 0) query += `WHERE ${clauses.whereClause.toString()} `;
+        if (clauses.whereClause.length > 0) {
+            query += 'WHERE ';
+
+            clauses.whereClause.forEach((value, index) => {
+                if (index != 0) {
+                    query += `AND ${value.toString()}`;
+                } else {
+                    query += `${value.toString()} `;
+                }
+            });
+        };
 
         if (clauses.orderByClause.length > 0) query += `ORDER BY ${clauses.orderByClause.toString()} `;
 
@@ -69,7 +79,6 @@ export default class SqliteQuery implements Query {
         if (clauses.limit) query += `LIMIT ${clauses.limit} `
 
         console.log(query);
-
         return `${query};`;
     }
 }
