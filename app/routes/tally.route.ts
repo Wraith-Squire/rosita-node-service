@@ -5,7 +5,7 @@ export const tallyRoutes = express.Router();
 const tallyController = new TallyController;
 
 tallyRoutes.get('/list/',  async (req, res, next) => {
-    var list = tallyController.list();
+    var list = await tallyController.list();
 
     res.json({data: list});
 });

@@ -45,12 +45,18 @@ export default class Model {
         return this;
     }
 
-    fetch() {
+    async fetch(): Promise<any[]> {
         var query = `SELECT ${this.selectClause.toString()} FROM ${this.table} `;
         if (this.whereClause.length > 0) query += `WHERE ${this.whereClause.toString()} `;
         if (this.orderByClause.length > 0) query += `ORDER BY ${this.orderByClause.toString()} `;
         if (this.groupByClause.length > 0) query += `GROUP BY ${this.groupByClause.toString()} `
 
-        this.queryHelper.query.fetch(query);
+        var result: Array<any> = [];
+
+        await this.queryHelper.query.fetch(query).then((response) => {
+            result = response;
+        });
+
+        return result;
     }
 }

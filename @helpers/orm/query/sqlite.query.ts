@@ -41,17 +41,17 @@ export default class SqliteQuery implements Query {
         });
     }
 
-    fetch(query: string): Array<any> {
-        var queryResult: Array<any> = [];
+    fetch(query: string): Promise<any> {
+        var db = this.db;
 
-        this.db.all(query, (error, rows: Array<any>) => {
-            if (error) {
-                throw error;
-            }
+        return new Promise(function(resolve, reject) {
+            db.all(query, (error, rows) => {
+                if (error) reject(error);
 
-            queryResult = rows as Array<any>;
-        });
+                resolve(rows);                
+            });
 
-        return queryResult;
+            db.close();
+        })
     }
 }
