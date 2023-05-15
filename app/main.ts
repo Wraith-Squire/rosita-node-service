@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 
+import { tallyRoutes } from "./routes/tally.route";
+
 dotenv.config();
 
 if (!process.env.PORT) {
@@ -15,6 +17,8 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use('/tally', tallyRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
