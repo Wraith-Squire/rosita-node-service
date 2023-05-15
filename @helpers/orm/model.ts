@@ -6,7 +6,7 @@ type SortOrder = `${'asc'|'desc'}`;
 export default class Model {
     protected table: string;
     protected primaryKey: string;
-    protected fillables: Array<string>;
+    protected fillables: Array<string> = [];
 
     private queryHelper: QueryHelper;
 
@@ -17,6 +17,20 @@ export default class Model {
     private having: Array<string>;
     private offset: number;
     private limit: number;
+
+    private getClausesObject(): QueryClauses {
+        var clauses = {
+            table: this.table,
+            limit: this.limit,
+            offset: this.offset,
+            selectClause: this.selectClause,
+            whereClause: this.whereClause,
+            orderByClause: this.orderByClause,
+            groupByClause: this.groupByClause,
+        }
+
+        return clauses;
+    }
 
     constructor() {
         this.queryHelper = new QueryHelper;
@@ -73,18 +87,10 @@ export default class Model {
 
         return result[0];
     }
+    
+    async insert(data: Record<string, any>) {
+        var clauses = this.getClausesObject();
 
-    private getClausesObject(): QueryClauses {
-        var clauses = {
-            table: this.table,
-            limit: this.limit,
-            offset: this.offset,
-            selectClause: this.selectClause,
-            whereClause: this.whereClause,
-            orderByClause: this.orderByClause,
-            groupByClause: this.groupByClause,
-        }
-
-        return clauses;
+        await this.queryHelper.query.insert(data, clauses);
     }
 }

@@ -2,6 +2,7 @@ import sqlite3 from 'sqlite3'
 import Query from "./query.abstract";
 import { dbSettings } from './types/dbSettings.type';
 import { QueryClauses } from "./types/queryClauses.type";
+import { error } from 'console';
 
 export default class SqliteQuery implements Query {
     private db_settings: dbSettings;
@@ -41,21 +42,42 @@ export default class SqliteQuery implements Query {
     }
 
     fetch(clauses: QueryClauses): Promise<any> {
-        var db = this.db;
-        var query = this.clausesToQuery(clauses);
+        var query = this.clausesToQuerySelect(clauses);
 
-        return new Promise(function(resolve, reject) {
-            db.all(query, (error, rows) => {
+        return new Promise((resolve, reject) => {
+            this.db.all(query, (error, rows) => {
                 if (error) reject(error);
 
                 resolve(rows);                
             });
 
-            db.close();
+            this.db.close();
         })
     }
 
-    private clausesToQuery(clauses: QueryClauses) {
+    insert(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
+        var columns = Object.keys(data).map((key) => this.camelToSnake(key));
+        var values = Object.values(data).map((value) => typeof value == "string" ? `'${value}'` : value );
+
+        console.log({columns: columns, values: values});
+
+        return new Promise((resolve, reject) => {
+            var query = `INSERT INTO ${clauses.table} (${columns.toString()}) VALUES(${values.toString()});`
+
+            this.db.serialize(() => {
+                console.log(query);
+                this.db.run(query,[], (result: any, error: any) => {
+                    if (error) reject(error);
+    
+                    resolve(result);
+                });
+            });
+
+            this.db.close();
+        });
+    }
+
+    private clausesToQuerySelect(clauses: QueryClauses) {
         var query = '';
         if (clauses.selectClause.length > 0) query += `SELECT ${clauses.selectClause.toString()} FROM ${clauses.table} `;
         else query += `SELECT * FROM ${clauses.table} `;
@@ -80,5 +102,11 @@ export default class SqliteQuery implements Query {
 
         console.log(query);
         return `${query};`;
+    }
+
+    private camelToSnake(string = '') {
+        return (string || '')
+          .replace(/([A-Z])/g, (match, group) => `_${group.toLowerCase()}`)
+          .replace(/^_/, '');
     }
 }

@@ -12,4 +12,10 @@ export default class TallyService {
 
         return result;
     }
+
+    create(data: Record<string, any>) {
+        var result = new TallyModel().insert(data); 
+
+        return result;
+    }
 }

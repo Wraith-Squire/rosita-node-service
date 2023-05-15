@@ -6,4 +6,5 @@ export default abstract class Query {
     abstract dropTable(table: string): void;
     abstract raw(query: string): void;
     abstract fetch(clauses: QueryClauses): Promise<any>;
+    abstract insert(data: Record<string, any>, clauses: QueryClauses): Promise<any>;
 }
