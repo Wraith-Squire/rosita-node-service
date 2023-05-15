@@ -93,4 +93,10 @@ export default class Model {
 
         await this.queryHelper.query.insert(data, clauses);
     }
+
+    async update(data: Record<string, any>) {
+        var clauses = this.getClausesObject();
+
+        await this.queryHelper.query.update(data, clauses);
+    }
 }

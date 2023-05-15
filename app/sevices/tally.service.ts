@@ -18,4 +18,10 @@ export default class TallyService {
 
         return result;
     }
+
+    update(id: number, data: Record<string, any>) {
+        var result = new TallyModel().find(id).update(data); 
+
+        return result;
+    }
 }

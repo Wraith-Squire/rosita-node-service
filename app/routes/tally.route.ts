@@ -21,3 +21,9 @@ tallyRoutes.post('/create/', async (req, res, next) => {
 
     res.json({data: list});
 });
+
+tallyRoutes.put('/update/', async (req, res, next) => {
+    var list = await tallyService.update(req.body.id, req.body.data);
+
+    res.json({data: list});
+}); 

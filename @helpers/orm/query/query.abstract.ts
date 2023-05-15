@@ -7,4 +7,5 @@ export default abstract class Query {
     abstract raw(query: string): void;
     abstract fetch(clauses: QueryClauses): Promise<any>;
     abstract insert(data: Record<string, any>, clauses: QueryClauses): Promise<any>;
+    abstract update(data: Record<string, any>, clauses: QueryClauses): Promise<any>;
 }

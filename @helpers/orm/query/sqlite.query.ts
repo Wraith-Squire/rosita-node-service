@@ -77,6 +77,39 @@ export default class SqliteQuery implements Query {
         });
     }
 
+    update(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
+        var dataEntries = Object.entries(data).map((value, index) => {
+            var setQuery = '';
+
+            if (index != 0) {
+                setQuery = ` ${value[0].toString()} = ${typeof value[1] == "string" ? `"${value[1].toString()}"` : value[1].toString()}`;
+            } else {
+                setQuery = `${value[0].toString()} =  ${typeof value[1] == "string" ? `"${value[1].toString()}"` : value[1].toString()}`;
+            }
+
+            return setQuery;
+        });
+        // var columns = Object.keys(data).map((key) => this.camelToSnake(key));
+        // var values = Object.values(data).map((value) => typeof value == "string" ? `'${value}'` : value );
+
+        console.log({dataEntries: dataEntries});
+
+        return new Promise((resolve, reject) => {
+            var query = `UPDATE ${clauses.table} SET ${dataEntries.toString()} WHERE ${clauses.whereClause};`
+
+            this.db.serialize(() => {
+                console.log(query);
+                this.db.run(query,[], (result: any, error: any) => {
+                    if (error) reject(error);
+    
+                    resolve(result);
+                });
+            });
+
+            this.db.close();
+        });
+    }
+
     private clausesToQuerySelect(clauses: QueryClauses) {
         var query = '';
         if (clauses.selectClause.length > 0) query += `SELECT ${clauses.selectClause.toString()} FROM ${clauses.table} `;
