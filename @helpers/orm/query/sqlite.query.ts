@@ -1,8 +1,7 @@
 import sqlite3 from 'sqlite3'
 import Query from "./query.abstract";
 import { dbSettings } from './types/dbSettings.type';
-
-
+import { QueryClauses } from "./types/queryClauses.type";
 
 export default class SqliteQuery implements Query {
     private db_settings: dbSettings;
@@ -41,8 +40,9 @@ export default class SqliteQuery implements Query {
         });
     }
 
-    fetch(query: string): Promise<any> {
+    fetch(clauses: QueryClauses): Promise<any> {
         var db = this.db;
+        var query = this.clausesToQuery(clauses);
 
         return new Promise(function(resolve, reject) {
             db.all(query, (error, rows) => {
@@ -53,5 +53,23 @@ export default class SqliteQuery implements Query {
 
             db.close();
         })
+    }
+
+    private clausesToQuery(clauses: QueryClauses) {
+        var query = '';
+        if (clauses.selectClause.length > 0) query += `SELECT ${clauses.selectClause.toString()} FROM ${clauses.table} `;
+        else query += `SELECT * FROM ${clauses.table} `;
+
+        if (clauses.whereClause.length > 0) query += `WHERE ${clauses.whereClause.toString()} `;
+
+        if (clauses.orderByClause.length > 0) query += `ORDER BY ${clauses.orderByClause.toString()} `;
+
+        if (clauses.groupByClause.length > 0) query += `GROUP BY ${clauses.groupByClause.toString()} `;
+
+        if (clauses.limit) query += `LIMIT ${clauses.limit} `
+
+        console.log(query);
+
+        return `${query};`;
     }
 }

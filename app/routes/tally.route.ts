@@ -1,11 +1,17 @@
 import express from "express";
-import TallyController from "../controllers/tally.controller";
+import TallyService from "../sevices/tally.service";
 
 export const tallyRoutes = express.Router();
-const tallyController = new TallyController;
+const tallyService = new TallyService;
 
 tallyRoutes.get('/list/',  async (req, res, next) => {
-    var list = await tallyController.list();
+    var list = await tallyService.list();
+
+    res.json({data: list});
+});
+
+tallyRoutes.get('/details/', async (req, res, next) => {
+    var list = await tallyService.details(req.body.id);
 
     res.json({data: list});
 });

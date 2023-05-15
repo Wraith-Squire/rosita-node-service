@@ -1,4 +1,5 @@
 import QueryHelper from "./query/query.helper";
+import { QueryClauses } from "./query/types/queryClauses.type";
 
 type SortOrder = `${'asc'|'desc'}`;
 
@@ -14,8 +15,8 @@ export default class Model {
     private orderByClause: Array<string> = [];
     private groupByClause: Array<string> = [];
     private having: Array<string>;
-    private offset: bigint;
-    private limit: bigint;
+    private offset: number;
+    private limit: number;
 
     constructor() {
         this.queryHelper = new QueryHelper;
@@ -27,10 +28,14 @@ export default class Model {
         return this;
     }
 
-    where(left: string, operator: string, right: string) {
+    where(left: string, operator: string, right: string|number) {
        this.whereClause.push(`${left} ${operator} ${right}`);
 
        return this;
+    }
+
+    find(id: number|string) {
+        return this.where(this.primaryKey, '=', id);
     }
 
     orderBy(value: string, sortOrder: SortOrder) {
@@ -45,18 +50,41 @@ export default class Model {
         return this;
     }
 
-    async fetch(): Promise<any[]> {
-        var query = `SELECT ${this.selectClause.toString()} FROM ${this.table} `;
-        if (this.whereClause.length > 0) query += `WHERE ${this.whereClause.toString()} `;
-        if (this.orderByClause.length > 0) query += `ORDER BY ${this.orderByClause.toString()} `;
-        if (this.groupByClause.length > 0) query += `GROUP BY ${this.groupByClause.toString()} `
+    async get(): Promise<any[]> {
+        var clauses = this.getClausesObject();
 
         var result: Array<any> = [];
 
-        await this.queryHelper.query.fetch(query).then((response) => {
+        await this.queryHelper.query.fetch(clauses).then((response) => {
             result = response;
         });
 
         return result;
+    }
+
+    async one(): Promise<any> {
+        var clauses = this.getClausesObject();
+
+        var result: Array<any> = [];
+
+        await this.queryHelper.query.fetch(clauses).then((response) => {
+            result = response;
+        });
+
+        return result[0];
+    }
+
+    private getClausesObject(): QueryClauses {
+        var clauses = {
+            table: this.table,
+            limit: this.limit,
+            offset: this.offset,
+            selectClause: this.selectClause,
+            whereClause: this.whereClause,
+            orderByClause: this.orderByClause,
+            groupByClause: this.groupByClause,
+        }
+
+        return clauses;
     }
 }
