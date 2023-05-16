@@ -29,4 +29,12 @@ export default class TallyService {
             console.log(errors);
         }); 
     }
+
+    delete(id: number) {
+        new TallyModel().find(id).delete().then((response) => {
+            return response;
+        }).catch((errors) => {
+            console.log(errors);
+        }); 
+    }
 }

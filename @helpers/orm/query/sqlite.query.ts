@@ -68,21 +68,9 @@ export default class SqliteQuery implements Query {
         var columns = Object.keys(data);
         var values = Object.values(data).map((value) => this.mapColumnValue(value));
 
-        console.log({columns: columns, values: values});
+        var query = `INSERT INTO ${clauses.table} (${columns.toString()}) VALUES(${values.toString()});`
 
-        return new Promise((resolve, reject) => {
-            var query = `INSERT INTO ${clauses.table} (${columns.toString()}) VALUES(${values.toString()});`
-
-            this.db.serialize(() => {
-                this.db.run(query,[], (result: any, error: any) => {
-                    if (error) reject(error);
-    
-                    resolve(result);
-                });
-            });
-
-            this.db.close();
-        });
+        return this.runQueryPromise(query);
     }
 
     update(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
@@ -100,51 +88,26 @@ export default class SqliteQuery implements Query {
             return setQuery;
         });
 
-        return new Promise((resolve, reject) => {
-            var query = `UPDATE ${clauses.table} SET ${dataEntries.toString()} WHERE ${clauses.whereClause};`
-
-            this.db.serialize(() => {
-                console.log(query);
-                this.db.run(query,[], (result: any, error: any) => {
-                    if (error) reject(error);
-    
-                    resolve(result);
-                });
-            });
-
-            this.db.close();
-        });
-    }
-
-    private clausesToQuerySelect(clauses: QueryClauses) {
-        var query = '';
-        if (clauses.selectClause.length > 0) query += `SELECT ${clauses.selectClause.toString()} FROM ${clauses.table} `;
-        else query += `SELECT * FROM ${clauses.table} `;
+        var query = `UPDATE ${clauses.table} SET ${dataEntries.toString()} `;
 
         if (clauses.whereClause.length > 0) {
-            query += 'WHERE ';
-
-            clauses.whereClause.forEach((value, index) => {
-                if (index != 0) {
-                    query += `AND ${value.toString()}`;
-                } else {
-                    query += `${value.toString()} `;
-                }
-            });
+            query += this.combineWhereClauses(clauses.whereClause);
         };
 
-        if (clauses.orderByClause.length > 0) query += `ORDER BY ${clauses.orderByClause.toString()} `;
-
-        if (clauses.groupByClause.length > 0) query += `GROUP BY ${clauses.groupByClause.toString()} `;
-
-        if (clauses.limit) query += `LIMIT ${clauses.limit} `
-
-        console.log(query);
-        return `${query};`;
+        return this.runQueryPromise(query);
     }
 
-    private mapColumnValue(value) {
-        console.log(value);
+    delete(clauses: QueryClauses): Promise<any> {
+        var query = `DELETE FROM ${clauses.table} `;
+
+        if (clauses.whereClause.length > 0) {
+            query += this.combineWhereClauses(clauses.whereClause);
+        };
+
+        return this.runQueryPromise(query);
+    }
+
+    private mapColumnValue(value): string {
         if (value instanceof Date) {
             return `"${value.toISOString()}"`;
         }
@@ -158,5 +121,51 @@ export default class SqliteQuery implements Query {
         }
 
         return value.toString();
+    }
+
+    private clausesToQuerySelect(clauses: QueryClauses): string {
+        var query = '';
+        if (clauses.selectClause.length > 0) query += `SELECT ${clauses.selectClause.toString()} FROM ${clauses.table} `;
+        else query += `SELECT * FROM ${clauses.table} `;
+
+        if (clauses.whereClause.length > 0) {
+            query += this.combineWhereClauses(clauses.whereClause);
+        };
+
+        if (clauses.orderByClause.length > 0) query += `ORDER BY ${clauses.orderByClause.toString()} `;
+
+        if (clauses.groupByClause.length > 0) query += `GROUP BY ${clauses.groupByClause.toString()} `;
+
+        if (clauses.limit) query += `LIMIT ${clauses.limit} `
+
+        return `${query};`;
+    }
+
+    private combineWhereClauses(whereClause: Array<string>): string {
+        var returnValue = 'WHERE ';
+
+        whereClause.forEach((value, index) => {
+            if (index != 0) {
+                returnValue += `AND ${value.toString()}`;
+            } else {
+                returnValue += `${value.toString()} `;
+            }
+        });
+
+        return returnValue;
+    }
+
+    private runQueryPromise(query: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.db.serialize(() => {
+                this.db.run(query,[], (result: any, error: any) => {
+                    if (error) reject(error);
+    
+                    resolve(result);
+                });
+            });
+
+            this.db.close();
+        });
     }
 }

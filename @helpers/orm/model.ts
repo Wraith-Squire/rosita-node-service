@@ -6,7 +6,7 @@ type SortOrder = `${'asc'|'desc'}`;
 export default class Model {
     protected table: string;
     protected primaryKey: string;
-    protected fillables: Array<string> = [];
+    protected fillables: Array<string>;
     protected useTimestamp: boolean = false;
 
     private queryHelper: QueryHelper;
@@ -91,12 +91,10 @@ export default class Model {
     
     async insert(data: Record<string, any>) {
         var fillableColumnsData = this.fillableColumnsData(data);
-
-        console.log(fillableColumnsData);
         var clauses = this.getClausesObject();
 
         if (this.useTimestamp) {
-            data.created_at = new Date();
+            fillableColumnsData.created_at = new Date();
         }
 
         await this.queryHelper.query.insert(fillableColumnsData, clauses);
@@ -107,10 +105,16 @@ export default class Model {
         var clauses = this.getClausesObject();
 
         if (this.useTimestamp) {
-            data.updated_at = new Date();
+            fillableColumnsData.updated_at = new Date();
         }
 
         await this.queryHelper.query.update(fillableColumnsData, clauses);
+    }
+
+    async delete() {
+        var clauses = this.getClausesObject();
+
+        await this.queryHelper.query.delete(clauses);
     }
 
     private keysToSnake(data: Record<string, any>) {
