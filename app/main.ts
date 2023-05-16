@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 
 import { tallyRoutes } from "./routes/tally.route";
+import { productRoutes } from "./routes/product.route";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/tally', tallyRoutes);
+app.use('/api/product', productRoutes);
 
 
 app.listen(PORT, () => {

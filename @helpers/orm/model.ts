@@ -107,7 +107,7 @@ export default class Model {
         if (this.useTimestamp) {
             fillableColumnsData.updated_at = new Date();
         }
-
+        console.log("here")
         await this.queryHelper.query.update(fillableColumnsData, clauses);
     }
 
