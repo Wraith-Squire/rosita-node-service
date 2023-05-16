@@ -11,7 +11,8 @@ export default class RequestValidator {
     }
 
     validate(): Promise<Record<string, any>> {
-        var validator = new Validator(this.data, this.rules);
+        var snakeCasedDate = this.keysToSnake(this.data);
+        var validator = new Validator(snakeCasedDate, this.rules);
 
         return new Promise((resolve, reject) => {
             if (validator.fails()) {
@@ -22,5 +23,21 @@ export default class RequestValidator {
                 resolve(this.data);
             }
         })
+    }
+
+    private keysToSnake(data: Record<string, any>) {
+        var returnValue = {};
+
+        Object.entries(data).forEach((value) => {
+            returnValue[this.camelToSnake(value[0])] = value[1];
+        });
+
+        return returnValue;
+    }
+
+    private camelToSnake(string = '') {
+        return (string || '')
+          .replace(/([A-Z])/g, (match, group) => `_${group.toLowerCase()}`)
+          .replace(/^_/, '');
     }
 }
