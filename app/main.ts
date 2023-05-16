@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 
 import { tallyRoutes } from "./routes/tally.route";
+import { tallyProductRoutes } from "./routes/tallyProduct.route";
 import { productRoutes } from "./routes/product.route";
 
 dotenv.config();
@@ -21,7 +22,7 @@ app.use(express.json());
 
 app.use('/api/tally', tallyRoutes);
 app.use('/api/product', productRoutes);
-
+app.use('/api/tallyProduct', tallyProductRoutes);
 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
