@@ -22,24 +22,32 @@ export default class SqliteQuery implements Query {
         this.db.serialize(() => {
             this.db.run( `CREATE TABLE IF NOT EXISTS ${table} (${columns.toString()});` )
         });
+
+        this.db.close();
     }
 
     alterTable(table: string, alters: string | string[]): void {
         this.db.serialize(() => {
             this.db.run(`ALTER TABLE ${table} ${alters.toString()};`)
         });
+
+        this.db.close();
     }
 
     dropTable(table: string): void {
         this.db.serialize(() => {
             this.db.run( `DROP TABLE ${table};` )
         });
+
+        this.db.close();
     }
 
     raw(query: string): void {
         this.db.serialize(() => {
             this.db.run(query);
         });
+
+        this.db.close();
     }
 
     fetch(clauses: QueryClauses): Promise<any> {
@@ -66,7 +74,6 @@ export default class SqliteQuery implements Query {
             var query = `INSERT INTO ${clauses.table} (${columns.toString()}) VALUES(${values.toString()});`
 
             this.db.serialize(() => {
-                console.log(query);
                 this.db.run(query,[], (result: any, error: any) => {
                     if (error) reject(error);
     
@@ -137,6 +144,7 @@ export default class SqliteQuery implements Query {
     }
 
     private mapColumnValue(value) {
+        console.log(value);
         if (value instanceof Date) {
             return `"${value.toISOString()}"`;
         }

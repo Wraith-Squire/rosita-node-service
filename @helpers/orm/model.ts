@@ -90,21 +90,27 @@ export default class Model {
     }
     
     async insert(data: Record<string, any>) {
+        var fillableColumnsData = this.fillableColumnsData(data);
+
+        console.log(fillableColumnsData);
         var clauses = this.getClausesObject();
+
         if (this.useTimestamp) {
             data.created_at = new Date();
         }
 
-        await this.queryHelper.query.insert(this.keysToSnake(data), clauses);
+        await this.queryHelper.query.insert(fillableColumnsData, clauses);
     }
 
     async update(data: Record<string, any>) {
+        var fillableColumnsData = this.fillableColumnsData(data);
         var clauses = this.getClausesObject();
+
         if (this.useTimestamp) {
             data.updated_at = new Date();
         }
 
-        await this.queryHelper.query.update(this.keysToSnake(data), clauses);
+        await this.queryHelper.query.update(fillableColumnsData, clauses);
     }
 
     private keysToSnake(data: Record<string, any>) {
@@ -121,5 +127,16 @@ export default class Model {
         return (string || '')
           .replace(/([A-Z])/g, (match, group) => `_${group.toLowerCase()}`)
           .replace(/^_/, '');
+    }
+
+    private fillableColumnsData(data: Record<string, any>) {
+        var returnValue: Record<string, any> = {};
+        var snakeKeyedData = this.keysToSnake(data);
+
+        this.fillables.forEach((fillable) => {
+            if (snakeKeyedData[fillable]) returnValue[fillable] = snakeKeyedData[fillable];
+        });
+
+        return returnValue;
     }
 }
