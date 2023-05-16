@@ -1,4 +1,5 @@
 import TallyModel from "../models/tally.model";
+import TallyRequest from "../requests/tally.request";
 
 export default class TallyService {
     list() {

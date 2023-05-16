@@ -89,10 +89,6 @@ export default class SqliteQuery implements Query {
 
             return setQuery;
         });
-        // var columns = Object.keys(data).map((key) => this.camelToSnake(key));
-        // var values = Object.values(data).map((value) => typeof value == "string" ? `'${value}'` : value );
-
-        console.log({dataEntries: dataEntries});
 
         return new Promise((resolve, reject) => {
             var query = `UPDATE ${clauses.table} SET ${dataEntries.toString()} WHERE ${clauses.whereClause};`
