@@ -15,14 +15,18 @@ export default class TallyService {
     }
 
     create(data: Record<string, any>) {
-        var result = new TallyModel().insert(data); 
-
-        return result;
+        new TallyModel().insert(data).then((response) => {
+            return response;
+        }).catch((errors) => {
+            console.error(errors);
+        }); 
     }
 
     update(id: number, data: Record<string, any>) {
-        var result = new TallyModel().find(id).update(data); 
-
-        return result;
+        new TallyModel().find(id).update(data).then((response) => {
+            return response;
+        }).catch((errors) => {
+            console.log(errors);
+        }); 
     }
 }

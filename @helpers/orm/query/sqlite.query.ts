@@ -3,6 +3,7 @@ import Query from "./query.abstract";
 import { dbSettings } from './types/dbSettings.type';
 import { QueryClauses } from "./types/queryClauses.type";
 import { error } from 'console';
+import { isDate } from 'util/types';
 
 export default class SqliteQuery implements Query {
     private db_settings: dbSettings;
@@ -56,8 +57,8 @@ export default class SqliteQuery implements Query {
     }
 
     insert(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
-        var columns = Object.keys(data).map((key) => this.camelToSnake(key));
-        var values = Object.values(data).map((value) => typeof value == "string" ? `'${value}'` : value );
+        var columns = Object.keys(data);
+        var values = Object.values(data).map((value) => this.mapColumnValue(value));
 
         console.log({columns: columns, values: values});
 
@@ -80,11 +81,13 @@ export default class SqliteQuery implements Query {
     update(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
         var dataEntries = Object.entries(data).map((value, index) => {
             var setQuery = '';
+            var column = value[0];
+            var columnValue = value[1];
 
             if (index != 0) {
-                setQuery = ` ${value[0].toString()} = ${typeof value[1] == "string" ? `"${value[1].toString()}"` : value[1].toString()}`;
+                setQuery = ` ${column} = ${this.mapColumnValue(columnValue)}`;
             } else {
-                setQuery = `${value[0].toString()} =  ${typeof value[1] == "string" ? `"${value[1].toString()}"` : value[1].toString()}`;
+                setQuery = `${column} =  ${this.mapColumnValue(columnValue)}`;
             }
 
             return setQuery;
@@ -133,9 +136,19 @@ export default class SqliteQuery implements Query {
         return `${query};`;
     }
 
-    private camelToSnake(string = '') {
-        return (string || '')
-          .replace(/([A-Z])/g, (match, group) => `_${group.toLowerCase()}`)
-          .replace(/^_/, '');
+    private mapColumnValue(value) {
+        if (value instanceof Date) {
+            return `"${value.toISOString()}"`;
+        }
+
+        if (typeof value == "string") {
+            return `"${value.toString()}"`;
+        }
+
+        if (typeof value == "object") {
+            return `JSON_SET('${JSON.stringify(value)}')`;
+        }
+
+        return value.toString();
     }
 }

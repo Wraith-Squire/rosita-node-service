@@ -1,5 +1,5 @@
 import { Rules } from "validatorjs";
-import RequestValidator from "../../@helpers/requestValidator/request.validator";
+import RequestValidator from "../../@helpers/request/request.validator";
 
 class TallyRequestValidator extends RequestValidator {
     rules: Rules = {

@@ -7,6 +7,7 @@ export default class Model {
     protected table: string;
     protected primaryKey: string;
     protected fillables: Array<string> = [];
+    protected useTimestamp: boolean = false;
 
     private queryHelper: QueryHelper;
 
@@ -90,13 +91,35 @@ export default class Model {
     
     async insert(data: Record<string, any>) {
         var clauses = this.getClausesObject();
+        if (this.useTimestamp) {
+            data.created_at = new Date();
+        }
 
-        await this.queryHelper.query.insert(data, clauses);
+        await this.queryHelper.query.insert(this.keysToSnake(data), clauses);
     }
 
     async update(data: Record<string, any>) {
         var clauses = this.getClausesObject();
+        if (this.useTimestamp) {
+            data.updated_at = new Date();
+        }
 
-        await this.queryHelper.query.update(data, clauses);
+        await this.queryHelper.query.update(this.keysToSnake(data), clauses);
+    }
+
+    private keysToSnake(data: Record<string, any>) {
+        var returnValue = {};
+
+        Object.entries(data).forEach((value) => {
+            returnValue[this.camelToSnake(value[0])] = value[1];
+        });
+
+        return returnValue;
+    }
+
+    private camelToSnake(string = '') {
+        return (string || '')
+          .replace(/([A-Z])/g, (match, group) => `_${group.toLowerCase()}`)
+          .replace(/^_/, '');
     }
 }
