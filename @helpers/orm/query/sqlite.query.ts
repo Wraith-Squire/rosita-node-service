@@ -161,7 +161,7 @@ export default class SqliteQuery implements Query {
 
         whereClause.forEach((value, index) => {
             if (index != 0) {
-                returnValue += `AND ${value.toString()}`;
+                returnValue += `AND ${value.toString()} `;
             } else {
                 returnValue += `${value.toString()} `;
             }

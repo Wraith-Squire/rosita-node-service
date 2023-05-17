@@ -44,8 +44,8 @@ export default class Model {
     }
 
     where(left: string, operator: string, right: string|number|null) { 
-        if (typeof right == "string") right = `'${right}'`
-        
+        if (typeof right == "string") right = `'${right}'`;
+
        this.whereClause.push(`${left} ${operator} ${right}`);
 
        return this;
