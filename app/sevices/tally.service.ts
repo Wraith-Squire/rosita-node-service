@@ -2,9 +2,18 @@ import TallyModel from "../models/tally.model";
 
 export default class TallyService {
     list(payload: Record<string, any>) {
-        var result = new TallyModel().select("*").paginate(payload.currentPage, payload.perPage); 
+        var result = new TallyModel().select("*");
+        console.log(payload);
 
-        return result;
+        if (payload.fromDate && payload.fromDate.length > 0) {
+            result.where("date_tallied", ">=", payload.fromDate);
+        }
+
+        if (payload.toDate && payload.toDate.length > 0) {
+            result.where("date_tallied", "<=", payload.toDate);
+        }
+
+        return result.paginate(payload.currentPage, payload.perPage);
     }
 
     details(id: number) {

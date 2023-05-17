@@ -52,9 +52,14 @@ export default class SqliteQuery implements Query {
 
     fetch(clauses: QueryClauses): Promise<any> {
         var query = this.clausesToQuerySelect(clauses);
+
+        console.log(query);
         return new Promise((resolve, reject) => {
             this.db.all(query, (error, rows) => {
-                if (error) reject(error);
+                if (error) {
+                    console.log(error);
+                    reject(error)
+                };
 
                 resolve(rows);                
             });

@@ -43,7 +43,9 @@ export default class Model {
         return this;
     }
 
-    where(left: string, operator: string, right: string|number|null) {
+    where(left: string, operator: string, right: string|number|null) { 
+        if (typeof right == "string") right = `'${right}'`
+        
        this.whereClause.push(`${left} ${operator} ${right}`);
 
        return this;
@@ -80,7 +82,7 @@ export default class Model {
     async paginate(currentPage: number, perPage: number) {
         var total = await this.count();
 
-        this.offset = perPage * currentPage;
+        this.offset = (currentPage - 1) * perPage;
         this.limit = perPage;
 
         var result = await this.get();

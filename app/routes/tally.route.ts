@@ -6,7 +6,7 @@ export const tallyRoutes = express.Router();
 const tallyService = new TallyService;
 
 tallyRoutes.get('/list/',  async (req, res, next) => {
-    var payload = req.body;
+    var payload = req.query;
 
     var list = await tallyService.list(payload);
 
