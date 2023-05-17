@@ -9,13 +9,13 @@ const productService = new ProductService;
 productRoutes.get('/list/',  async (req, res, next) => {
     var list = await productService.list();
 
-    res.json({data: list});
+    res.send(list);
 });
 
 productRoutes.get('/details/', async (req, res, next) => {
-    var list = await productService.details(req.body.id);
+    var details = await productService.details(req.body.id);
 
-    res.json({data: list});
+    res.json(details);
 });
 
 productRoutes.post('/create/', ProductRequest,  async (req, res, next) => {

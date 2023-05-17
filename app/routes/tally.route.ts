@@ -8,13 +8,13 @@ const tallyService = new TallyService;
 tallyRoutes.get('/list/',  async (req, res, next) => {
     var list = await tallyService.list();
 
-    res.json({data: list});
+    res.send(list);
 });
 
 tallyRoutes.get('/details/', async (req, res, next) => {
-    var list = await tallyService.details(req.body.id);
+    var details = await tallyService.details(req.body.id);
 
-    res.json({data: list});
+    res.json(details);
 });
 
 tallyRoutes.post('/create/', TallyRequest,  async (req, res, next) => {
