@@ -1,8 +1,8 @@
 import TallyModel from "../models/tally.model";
 
 export default class TallyService {
-    list() {
-        var result = new TallyModel().select("*").get(); 
+    list(payload: Record<string, any>) {
+        var result = new TallyModel().select("*").paginate(payload.currentPage, payload.perPage).get(); 
 
         return result;
     }

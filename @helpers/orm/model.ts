@@ -65,6 +65,13 @@ export default class Model {
         return this;
     }
 
+    paginate(currentPage: number, perPage: number) {
+        this.offset = perPage * currentPage;
+        this.limit = perPage;
+
+        return this;
+    }
+
     async get(): Promise<any[]> {
         var clauses = this.getClausesObject();
 

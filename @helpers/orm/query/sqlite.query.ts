@@ -138,6 +138,8 @@ export default class SqliteQuery implements Query {
 
         if (clauses.limit) query += `LIMIT ${clauses.limit} `
 
+        if (clauses.offset) query += `OFFSET ${clauses.offset} `
+
         return `${query};`;
     }
 
