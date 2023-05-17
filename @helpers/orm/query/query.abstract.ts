@@ -6,6 +6,7 @@ export default abstract class Query {
     abstract dropTable(table: string): void;
     abstract raw(query: string): void;
     abstract fetch(clauses: QueryClauses): Promise<any>;
+    abstract count(clauses: QueryClauses): Promise<number>;
     abstract insert(data: Record<string, any>, clauses: QueryClauses): Promise<any>;
     abstract update(data: Record<string, any>, clauses: QueryClauses): Promise<any>;
     abstract delete(clauses: QueryClauses): Promise<any>;

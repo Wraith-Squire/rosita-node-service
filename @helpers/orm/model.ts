@@ -65,11 +65,35 @@ export default class Model {
         return this;
     }
 
-    paginate(currentPage: number, perPage: number) {
+    async count() {
+        var clauses = this.getClausesObject();
+
+        var result: number = 0;
+
+        await this.queryHelper.query.count(clauses).then((response) => {
+            result = response;
+        });
+
+        return result;
+    }
+
+    async paginate(currentPage: number, perPage: number) {
+        var total = await this.count();
+
         this.offset = perPage * currentPage;
         this.limit = perPage;
 
-        return this;
+        var result = await this.get();
+
+        var paginated = {
+            currentPage: currentPage,
+            perPage: perPage,
+            lastPage: total % perPage == 0 ? Math.floor(total/perPage) : Math.floor(total/perPage) + 1,
+            total: total, 
+            result: result
+        }
+
+        return paginated;
     }
 
     async get(): Promise<any[]> {

@@ -52,16 +52,32 @@ export default class SqliteQuery implements Query {
 
     fetch(clauses: QueryClauses): Promise<any> {
         var query = this.clausesToQuerySelect(clauses);
-
         return new Promise((resolve, reject) => {
             this.db.all(query, (error, rows) => {
                 if (error) reject(error);
 
                 resolve(rows);                
             });
+        });
+    }
 
-            this.db.close();
-        })
+    count(clauses: QueryClauses): Promise<number> {
+        clauses.selectClause = ["COUNT(1) as count"];
+        clauses.limit = undefined;
+        clauses.offset = undefined;
+
+        var query = this.clausesToQuerySelect(clauses);
+        return new Promise((resolve, reject) => {
+            this.db.all(query, (error, rows: Array<any>) => {
+                if (error) reject(error);
+
+                var result = 0;
+
+                if (rows instanceof Array) result = rows[0].count
+
+                resolve(result);                
+            });
+        });
     }
 
     insert(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
