@@ -22,32 +22,24 @@ export default class SqliteQuery implements Query {
         this.db.serialize(() => {
             this.db.run( `CREATE TABLE IF NOT EXISTS ${table} (${columns.toString()});` )
         });
-
-        this.db.close();
     }
 
     alterTable(table: string, alters: string | string[]): void {
         this.db.serialize(() => {
             this.db.run(`ALTER TABLE ${table} ${alters.toString()};`)
         });
-
-        this.db.close();
     }
 
     dropTable(table: string): void {
         this.db.serialize(() => {
             this.db.run( `DROP TABLE ${table};` )
         });
-
-        this.db.close();
     }
 
     raw(query: string): void {
         this.db.serialize(() => {
             this.db.run(query);
         });
-
-        this.db.close();
     }
 
     fetch(clauses: QueryClauses): Promise<any> {
@@ -61,7 +53,7 @@ export default class SqliteQuery implements Query {
                     reject(error)
                 };
 
-                resolve(rows);                
+                resolve(rows);
             });
         });
     }
@@ -80,7 +72,7 @@ export default class SqliteQuery implements Query {
 
                 if (rows instanceof Array) result = rows[0].count
 
-                resolve(result);                
+                resolve(result);   
             });
         });
     }
@@ -187,8 +179,6 @@ export default class SqliteQuery implements Query {
                     resolve(result);
                 });
             });
-
-            this.db.close();
         });
     }
 }
