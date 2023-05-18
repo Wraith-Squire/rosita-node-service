@@ -21,16 +21,16 @@ export default class TallyService {
         return result;
     }
 
-    create(data: Record<string, any>) {
-        new TallyModel().insert(data).then((response) => {
+    create(payload: Record<string, any>) {
+        new TallyModel().insert(payload).then((response) => {
             return response;
         }).catch((errors) => {
             console.error(errors);
         }); 
     }
 
-    update(id: number, data: Record<string, any>) {
-        new TallyModel().find(id).update(data).then((response) => {
+    update(id: number, payload: Record<string, any>) {
+        new TallyModel().find(id).update(payload).then((response) => {
             return response;
         }).catch((errors) => {
             console.log(errors);

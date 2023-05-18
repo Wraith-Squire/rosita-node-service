@@ -4,7 +4,7 @@ import { rejects } from "assert";
 
 class ProductRequestValidator extends RequestValidator {
     rules: Rules = {
-        product_name: 'required|alpha',
+        product_name: 'required|string',
         product_price: 'required|numeric',
         product_components: 'array',
         product_cost: 'required|numeric'

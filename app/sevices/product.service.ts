@@ -2,9 +2,9 @@ import ProductModel from "../models/product.model";
 
 export default class ProductService {
     list(payload: Record<string, any>) {
-        var result = new ProductModel().select("*").paginate(payload.currentPage, payload.perPage); 
+        var result = new ProductModel().select("*"); 
 
-        return result;
+        return result.paginate(payload.currentPage, payload.perPage);
     }
 
     details(id: number) {
@@ -13,16 +13,16 @@ export default class ProductService {
         return result;
     }
 
-    create(data: Record<string, any>) {
-        new ProductModel().insert(data).then((response) => {
+    create(payload: Record<string, any>) {
+        new ProductModel().insert(payload).then((response) => {
             return response;
         }).catch((errors) => {
             console.error(errors);
         });
     }
 
-    update(id: number, data: Record<string, any>) {
-        new ProductModel().find(id).update(data).then((response) => {
+    update(id: number, payload: Record<string, any>) {
+        new ProductModel().find(id).update(payload).then((response) => {
             return response;
         }).catch((errors) => {
             console.log(errors);
