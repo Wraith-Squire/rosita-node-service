@@ -22,13 +22,13 @@ tallyRoutes.get('/details/', async (req, res, next) => {
 });
 
 tallyRoutes.post('/create/', TallyRequest,  async (req, res, next) => {
-    await tallyService.create(req.body.data);
+    await tallyService.create(req.body);
 
     res.json({message: "Tally created successfully", code: 200});
 });
 
 tallyRoutes.put('/update/', TallyRequest, async (req, res, next) => {
-    await tallyService.update(req.body.id, req.body.data);
+    await tallyService.update(req.body.id, req.body);
 
     res.json({message: "Tally updated successfully", code: 200});
 }); 

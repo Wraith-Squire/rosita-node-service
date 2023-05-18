@@ -19,17 +19,17 @@ productRoutes.get('/details/', async (req, res, next) => {
 
     var details = await productService.details(payload.id as unknown as number);
 
-    res.send({details: details});
+    res.send(details);
 });
 
 productRoutes.post('/create/', ProductRequest,  async (req, res, next) => {
-    await productService.create(req.body.data);
+    await productService.create(req.body);
 
     res.json({message: "Product created successfully", code: 200});
 });
 
 productRoutes.put('/update/', ProductRequest, async (req, res, next) => {
-    await productService.update(req.body.id, req.body.data);
+    await productService.update(req.body.id, req.body);
 
     res.json({message: "Product updated successfully", code: 200});
 }); 

@@ -17,11 +17,9 @@ class TallyRequestValidator extends RequestValidator {
 }
 
 export default function TallyRequest(req, res, next) {
-    new TallyRequestValidator(req.body.data).validate().then((response) => {
+    new TallyRequestValidator(req.body).validate().then((response) => {
         next();
     }).catch((errors) => {
-        errors.code = 400;
-
-        res.json(errors);
+        res.status(403).send(errors);
     });
 }
