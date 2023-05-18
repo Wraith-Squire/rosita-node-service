@@ -4,6 +4,10 @@ export default class ProductService {
     list(payload: Record<string, any>) {
         var result = new ProductModel().select("*"); 
 
+        if (payload.search) {
+            result.where("lower(product_name)", "LIKE", `%${payload.search.toLowerCase()}%`);
+        }
+
         return result.paginate(payload.currentPage, payload.perPage);
     }
 
