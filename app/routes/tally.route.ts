@@ -14,7 +14,9 @@ tallyRoutes.get('/list/',  async (req, res, next) => {
 });
 
 tallyRoutes.get('/details/', async (req, res, next) => {
-    var details = await tallyService.details(req.body.id);
+    var payload = req.query;
+
+    var details = await tallyService.details(payload.id as unknown as number);
 
     res.json(details);
 });

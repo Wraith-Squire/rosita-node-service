@@ -1,8 +1,8 @@
 import ProductModel from "../models/product.model";
 
 export default class ProductService {
-    list() {
-        var result = new ProductModel().select("*").get(); 
+    list(payload: Record<string, any>) {
+        var result = new ProductModel().select("*").paginate(payload.currentPage, payload.perPage); 
 
         return result;
     }
