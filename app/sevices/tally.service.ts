@@ -12,6 +12,8 @@ export default class TallyService {
             result.where("date_tallied", "<=", payload.toDate);
         }
 
+        result.orderBy('date_tallied', 'desc');
+
         return result.paginate(payload.currentPage, payload.perPage);
     }
 
