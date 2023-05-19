@@ -37,4 +37,24 @@ tallyRoutes.delete('/delete/', async (req, res, next) => {
     await tallyService.delete(req.body.id);
 
     res.json({message: "Tally updated successfully", code: 200});
-}); 
+});
+
+tallyRoutes.get('/export/',  async (req, res, next) => {
+    var payload = req.query;
+
+    await tallyService.exportToExcel(payload).then((response) => {
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+    
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=" + "tally list.xlsx"
+        );
+      
+        return response.xlsx.write(res).then(function () {
+            res.status(200).end();
+        });
+    });
+});
