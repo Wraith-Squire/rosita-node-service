@@ -4,21 +4,20 @@ import RequestValidator from "../../@helpers/request/request.validator";
 class TallyProductRequestValidator extends RequestValidator {
     rules: Rules = {
         product_id: 'required|integer',
-        count: 'required|integer',
-        unsold: 'required|integer',
-        sold: 'integer',
-        cost: 'number',
-        sales: 'number',
-        income: 'number',
+        product_name: 'required|string',
+        product_count: 'required|integer',
+        product_unsold: 'required|integer',
+        product_sold: 'integer',
+        product_cost: 'numeric',
+        product_sales: 'numeric',
+        product_income: 'numeric',
     };
 }
 
 export default function TallyProductRequest(req, res, next) {
-    new TallyProductRequestValidator(req.body.data).validate().then((response) => {
+    new TallyProductRequestValidator(req.body).validate().then((response) => {
         next();
     }).catch((errors) => {
-        errors.code = 400;
-
-        res.json(errors);
+        res.status(403).send(errors);
     });
 }
