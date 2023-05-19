@@ -9,8 +9,10 @@ class TallyProductRequestValidator extends RequestValidator {
         product_unsold: 'required|integer',
         product_sold: 'integer',
         product_cost: 'numeric',
+        product_price: 'numeric',
         product_sales: 'numeric',
         product_income: 'numeric',
+        product_price_override: 'boolean',
     };
 }
 
