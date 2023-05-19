@@ -5,7 +5,7 @@ class TallyRequestValidator extends RequestValidator {
     rules: Rules = {
         date_tallied: 'required|date',
         comment: 'string',
-        status: 'required|in:draft,completed',
+        status: 'in:draft,completed',
         products: 'array',
         total_count: 'integer',
         total_sold: 'integer',
