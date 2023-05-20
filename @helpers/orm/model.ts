@@ -80,6 +80,7 @@ export default class Model {
 
     async paginate(currentPage: number, perPage: number) {
         var total = await this.count();
+        console.log(total);
 
         this.offset = (currentPage - 1) * perPage;
         this.limit = perPage;
@@ -118,6 +119,7 @@ export default class Model {
             result = response;
         });
 
+        console.log(result);
         return result[0];
     }
     

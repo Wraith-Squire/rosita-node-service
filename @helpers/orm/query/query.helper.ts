@@ -1,3 +1,4 @@
+import DBhub from "./dbhub.query";
 import Query from "./query.abstract";
 import SqliteQuery from "./sqlite.query";
 import { dbSettings } from "./types/dbSettings.type";
@@ -21,8 +22,12 @@ export default class QueryHelper {
     }
 
     private getQuery(): Query {
+        console.log(this.db_settings.db_host);
+
         if (this.db_settings.db_connection == "sqlite") {
             return new SqliteQuery(this.db_settings);
+        } else if (this.db_settings.db_connection == "dbhub") {
+            return new DBhub(this.db_settings);
         } else {
             throw "Error. Database connection not found."
         }

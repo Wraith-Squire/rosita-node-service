@@ -1,58 +1,37 @@
-import sqlite3 from 'sqlite3'
 import Query from "./query.abstract";
 import { dbSettings } from './types/dbSettings.type';
 import { QueryClauses } from "./types/queryClauses.type";
+import axios from 'axios';
+import querystring from "querystring";
 
-export default class SqliteQuery implements Query {
+export default class DBhub implements Query {
     private db_settings: dbSettings;
-    db: sqlite3.Database;
+
 
     constructor(db_settings: dbSettings) {
         this.db_settings = db_settings;
-        this.db = this.connect();
-    }
-
-    private connect() {
-        return new sqlite3.Database(this.db_settings.db_host);
     }
 
     createTable(table: string, columns: string | string[]): void {
-        this.db.serialize(() => {
-            this.db.run( `CREATE TABLE IF NOT EXISTS ${table} (${columns.toString()});` )
-        });
+        const query =  `CREATE TABLE IF NOT EXISTS ${table} (${columns.toString()});`;
     }
 
     alterTable(table: string, alters: string | string[]): void {
-        this.db.serialize(() => {
-            this.db.run(`ALTER TABLE ${table} ${alters.toString()};`)
-        });
+        const query = `ALTER TABLE ${table} ${alters.toString()};`;
     }
 
     dropTable(table: string): void {
-        this.db.serialize(() => {
-            this.db.run( `DROP TABLE ${table};` )
-        });
+        const query =  `DROP TABLE ${table};`;
     }
 
     raw(query: string): void {
-        this.db.serialize(() => {
-            this.db.run(query);
-        });
+
     }
 
     fetch(clauses: QueryClauses): Promise<any> {
         var query = this.clausesToQuerySelect(clauses);
 
-        return new Promise((resolve, reject) => {
-            this.db.all(query, (error, rows) => {
-                if (error) {
-                    console.log(error);
-                    reject(error)
-                };
-
-                resolve(rows);
-            });
-        });
+        return this.runQueryPromiseQuery(query);
     }
 
     count(clauses: QueryClauses): Promise<number> {
@@ -61,17 +40,19 @@ export default class SqliteQuery implements Query {
         clauses.offset = undefined;
 
         var query = this.clausesToQuerySelect(clauses);
-        return new Promise((resolve, reject) => {
-            this.db.all(query, (error, rows: Array<any>) => {
-                if (error) reject(error);
+  
+        return new Promise(async (resolve, reject) => {
+            await axios.post(this.db_settings.db_host + '/v1/query', 
+                this.getApiParameters(query), 
+                { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+            ).then((response) => {
+                const returnValue = response.data[0][0]['Value'];
 
-                var result = 0;
-
-                if (rows instanceof Array) result = rows[0].count
-
-                resolve(result);   
+                resolve(returnValue);
+            }).catch((error) => {
+                reject(error);
             });
-        });
+        });;
     }
 
     insert(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
@@ -80,7 +61,7 @@ export default class SqliteQuery implements Query {
 
         var query = `INSERT INTO ${clauses.table} (${columns.toString()}) VALUES(${values.toString()});`
 
-        return this.runQueryPromise(query);
+        return this.runQueryPromiseExecute(query);
     }
 
     update(data: Record<string, any>, clauses: QueryClauses): Promise<any> {
@@ -104,7 +85,7 @@ export default class SqliteQuery implements Query {
             query += this.combineWhereClauses(clauses.whereClause);
         };
 
-        return this.runQueryPromise(query);
+        return this.runQueryPromiseExecute(query);
     }
 
     delete(clauses: QueryClauses): Promise<any> {
@@ -114,7 +95,7 @@ export default class SqliteQuery implements Query {
             query += this.combineWhereClauses(clauses.whereClause);
         };
 
-        return this.runQueryPromise(query);
+        return this.runQueryPromiseExecute(query);
     }
 
     private mapColumnValue(value): string {
@@ -167,15 +148,47 @@ export default class SqliteQuery implements Query {
         return returnValue;
     }
 
-    private runQueryPromise(query: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.db.serialize(() => {
-                this.db.run(query,[], (result: any, error: any) => {
-                    if (error) reject(error);
-    
-                    resolve(result);
+    private runQueryPromiseQuery(query: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            await axios.post(this.db_settings.db_host + '/v1/query', 
+                this.getApiParameters(query), 
+                { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+            ).then((response) => {
+                var returnValue = response.data.map((row: Array<Record<string, any>>) => {
+                    var objectResult = {} as Record<string, any>;
+                    row.forEach((column) => {
+                        objectResult[column['Name']] = column['Value']; 
+                    });
+
+                    return objectResult;
                 });
+
+                resolve(returnValue);
+            }).catch((error) => {
+                reject(error);
             });
+        });
+    }
+
+    private runQueryPromiseExecute(query: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            await axios.post(this.db_settings.db_host + '/v1/execute', 
+                this.getApiParameters(query), 
+                { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+            ).then((response) => {
+                resolve(response);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
+
+    private getApiParameters(query: string) {
+        return querystring.stringify({
+            apikey: `${this.db_settings.db_password}`,
+            dbowner: `${this.db_settings.db_username}`,
+            dbname: `${this.db_settings.db_database}`,
+            sql: btoa(query)
         });
     }
 }
