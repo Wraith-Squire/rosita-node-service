@@ -155,7 +155,7 @@ export default class DBhub implements Query {
                 this.getApiParameters(query), 
                 { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
             ).then((response) => {
-                var returnValue = response.data.map((row: Array<Record<string, any>>) => {
+                var returnValue = response.data?.map((row: Array<Record<string, any>>) => {
                     var objectResult = {} as Record<string, any>;
                     row.forEach((column) => {
                         objectResult[column['Name']] = column['Value']; 
