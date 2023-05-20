@@ -3,6 +3,7 @@ import { dbSettings } from './types/dbSettings.type';
 import { QueryClauses } from "./types/queryClauses.type";
 import axios from 'axios';
 import querystring from "querystring";
+import { btoa } from "buffer";
 
 export default class DBhub implements Query {
     private db_settings: dbSettings;
