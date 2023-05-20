@@ -15,7 +15,6 @@ export default class Model {
     private whereClause: Array<string> = [];
     private orderByClause: Array<string> = [];
     private groupByClause: Array<string> = [];
-    private having: Array<string>;
     private offset: number;
     private limit: number;
 
@@ -129,7 +128,7 @@ export default class Model {
         if (this.useTimestamp) {
             fillableColumnsData.created_at = new Date();
         }
-
+        console.log({fillableColumnsData: fillableColumnsData});
         await this.queryHelper.query.insert(fillableColumnsData, clauses);
     }
 
@@ -171,7 +170,7 @@ export default class Model {
         var snakeKeyedData = this.keysToSnake(data);
 
         this.fillables.forEach((fillable) => {
-            if (snakeKeyedData[fillable]) returnValue[fillable] = snakeKeyedData[fillable];
+            if (snakeKeyedData[fillable] != undefined) returnValue[fillable] = snakeKeyedData[fillable];
         });
 
         return returnValue;
