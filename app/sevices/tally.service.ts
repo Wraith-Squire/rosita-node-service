@@ -70,11 +70,11 @@ export default class TallyService {
         const worksheet = workbook.addWorksheet('Tally List');
 
         const tallyColumns: Array<Partial<Excel.Column>>  = [
-            {key: 'date_tallied', header: 'Date Tallied', width: 32, alignment: {vertical: 'middle', horizontal: 'center'}},
-            {key: 'product_name', header: 'Product Name', width: 32, alignment: {vertical: 'middle', horizontal: 'center'}},
-            {key: 'product_count', header: 'Made', width: 32, alignment: {vertical: 'middle', horizontal: 'center'}, },
-            {key: 'product_sold', header: 'Sold', width: 32, alignment: {vertical: 'middle', horizontal: 'center'}},
-            {key: 'product_sales', header: 'Sales', width: 32, alignment: {vertical: 'middle', horizontal: 'center'}}
+            {key: 'date_tallied', header: 'Date Tallied', width: 16, alignment: {vertical: 'middle', horizontal: 'center', wrapText: true}},
+            {key: 'product_name', header: 'Product Name', width: 20, alignment: {vertical: 'middle', horizontal: 'center', wrapText: true}},
+            {key: 'product_count', header: 'Made', width: 10, alignment: {vertical: 'middle', horizontal: 'center', wrapText: true}, },
+            {key: 'product_sold', header: 'Sold', width: 10, alignment: {vertical: 'middle', horizontal: 'center', wrapText: true}},
+            {key: 'product_sales', header: 'Sales', width: 10, alignment: {vertical: 'middle', horizontal: 'center', wrapText: true}}
         ];
 
         worksheet.columns = tallyColumns;
@@ -108,8 +108,7 @@ export default class TallyService {
                 product_sales: tally.total_sales as number
             });
 
-            worksheet.getRow(rowCount+1).font = {size: 12, bold: true, color: {argb: "FFFFFF"}};
-            worksheet.getRow(rowCount+1).fill = {type: "pattern", pattern: "solid", fgColor: {argb: "67c23a"}};
+            worksheet.getRow(rowCount+1).font = {size: 13, bold: true};
             worksheet.mergeCells(`A${tallyStartRowCount+1}`, `A${rowCount+1}`);
             worksheet.getCell(`A${tallyStartRowCount+1}`, `A${rowCount+1}`).alignment = {vertical: "middle", horizontal: "center"};
         });
@@ -119,8 +118,7 @@ export default class TallyService {
 
         worksheet.columns.forEach((column, index) => {
             worksheet.getCell(`${alphabet[index]}1`).alignment = { vertical: 'middle', horizontal: 'center' };
-            worksheet.getCell(`${alphabet[index]}1`).font = {size: 13, bold: true, color: {argb: "FFFFFF"}};
-            worksheet.getRow(1).fill = {type: "pattern", pattern: "solid", fgColor: {argb: "409eff"}};
+            worksheet.getCell(`${alphabet[index]}1`).font = {size: 13, bold: true};
         });
 
         return workbook;
