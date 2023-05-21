@@ -29,7 +29,7 @@ export default class ProductService {
         new ProductModel().find(id).update(payload).then((response) => {
             return response;
         }).catch((errors) => {
-            console.log(errors);
+            console.error(errors);
         });
     }
 
@@ -37,7 +37,7 @@ export default class ProductService {
         new ProductModel().find(id).delete().then((response) => {
             return response;
         }).catch((errors) => {
-            console.log(errors);
+            console.error(errors);
         });
     }
 }

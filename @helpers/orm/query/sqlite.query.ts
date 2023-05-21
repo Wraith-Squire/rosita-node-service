@@ -46,7 +46,6 @@ export default class SqliteQuery implements Query {
         return new Promise((resolve, reject) => {
             this.db.all(query, (error, rows) => {
                 if (error) {
-                    console.log(error);
                     reject(error)
                 };
 

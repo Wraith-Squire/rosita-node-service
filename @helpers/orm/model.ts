@@ -80,7 +80,6 @@ export default class Model {
 
     async paginate(currentPage: number, perPage: number) {
         var total = await this.count();
-        console.log(total);
 
         this.offset = (currentPage - 1) * perPage;
         this.limit = perPage;
@@ -119,7 +118,6 @@ export default class Model {
             result = response;
         });
 
-        console.log(result);
         return result[0];
     }
     
@@ -130,7 +128,7 @@ export default class Model {
         if (this.useTimestamp) {
             fillableColumnsData.created_at = new Date();
         }
-        console.log({fillableColumnsData: fillableColumnsData});
+
         await this.queryHelper.query.insert(fillableColumnsData, clauses);
     }
 
@@ -141,7 +139,7 @@ export default class Model {
         if (this.useTimestamp) {
             fillableColumnsData.updated_at = new Date();
         }
-        console.log("here")
+
         await this.queryHelper.query.update(fillableColumnsData, clauses);
     }
 

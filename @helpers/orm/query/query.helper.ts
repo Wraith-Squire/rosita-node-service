@@ -22,8 +22,6 @@ export default class QueryHelper {
     }
 
     private getQuery(): Query {
-        console.log(this.db_settings.db_host);
-
         if (this.db_settings.db_connection == "sqlite") {
             return new SqliteQuery(this.db_settings);
         } else if (this.db_settings.db_connection == "dbhub") {

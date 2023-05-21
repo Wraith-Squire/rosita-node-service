@@ -15,7 +15,6 @@ export default function ProductRequest(req, res, next) {
     new ProductRequestValidator(req.body).validate().then((response) => {
         next();
     }).catch((errors) => {
-        console.log(errors);
         res.status(403).send(errors);
     });
 }
