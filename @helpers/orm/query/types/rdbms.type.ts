@@ -1,1 +1,1 @@
-export type rdbms = `${'sqlite'|'postgresql'|'mysql'|'dbhub'}`
+export type rdbms = `${'sqlite'|'postgres'|'mysql'|'dbhub'}`

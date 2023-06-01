@@ -8,6 +8,8 @@ export default class ProductService {
             result.where("lower(product_name)", "LIKE", `%${payload.search.toLowerCase()}%`);
         }
 
+        result.orderBy("product_id", "desc");
+
         return result.paginate(payload.currentPage, payload.perPage);
     }
 

@@ -1,4 +1,5 @@
 import DBhub from "./dbhub.query";
+import Postgres from "./postgres.query";
 import Query from "./query.abstract";
 import SqliteQuery from "./sqlite.query";
 import { dbSettings } from "./types/dbSettings.type";
@@ -26,7 +27,10 @@ export default class QueryHelper {
             return new SqliteQuery(this.db_settings);
         } else if (this.db_settings.db_connection == "dbhub") {
             return new DBhub(this.db_settings);
-        } else {
+        } else if (this.db_settings.db_connection == "postgres") {
+            return new Postgres(this.db_settings);
+        }
+         else {
             throw "Error. Database connection not found."
         }
     }
