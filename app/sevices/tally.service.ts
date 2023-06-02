@@ -79,8 +79,15 @@ export default class TallyService {
 
         worksheet.columns = tallyColumns;
 
-        var tallies = await this.getExportData(payload);
+        var tallies = [] as Array<any>;
+        await this.getExportData(payload).then((response: Array<any>) => {
+            console.log(response);
+            tallies = response;
+        });
+
         var rowCount = 0;
+
+        tallies = tallies.filter((tally) => tally.product && JSON.parse(tally.product).length > 0);
 
         tallies.forEach((tally, index) => {
             var tallyStartRowCount = 2;
