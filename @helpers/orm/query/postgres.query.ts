@@ -61,6 +61,7 @@ export default class Postgres implements Query {
 
                 resolve(returnValue);
             }).catch((error) => {
+                console.log(error);
                 reject(error);
             });
         });;
@@ -135,7 +136,7 @@ export default class Postgres implements Query {
         }
 
         if (typeof value == "object") {
-            return `'${JSON.stringify(value)}'::jsonb`;
+            return `'${JSON.stringify(value)}'`;
         }
 
         return value.toString();
@@ -185,6 +186,7 @@ export default class Postgres implements Query {
                 resolve(response);
             }).catch((error) => {
                 // console.log(error);
+                console.log(error);
                 reject(error);
             });
         });
