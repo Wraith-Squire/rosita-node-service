@@ -86,10 +86,13 @@ export default class TallyService {
 
         var rowCount = 0;
 
+        console.log({before: tallies.length});
+
         tallies = tallies.filter((tally) => {
             return tally.products && JSON.parse(tally.products).length > 0;
         });
 
+        console.log({after: tallies.length});
         tallies.forEach((tally, index) => {
             var tallyStartRowCount = 2;
             JSON.parse(tally.products).forEach((product, index) => {
