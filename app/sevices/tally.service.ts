@@ -81,13 +81,14 @@ export default class TallyService {
 
         var tallies = [] as Array<any>;
         await this.getExportData(payload).then((response: Array<any>) => {
-            console.log(response);
             tallies = response;
         });
 
         var rowCount = 0;
 
-        tallies = tallies.filter((tally) => tally.product && JSON.parse(tally.product).length > 0);
+        tallies = tallies.filter((tally) => {
+            return tally.products && JSON.parse(tally.products).length > 0;
+        });
 
         tallies.forEach((tally, index) => {
             var tallyStartRowCount = 2;

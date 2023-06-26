@@ -16,12 +16,10 @@ export default class Postgres implements Query {
         this.db_settings = db_settings;
         this.postgres_url = `postgres://${this.db_settings.db_username}:${this.db_settings.db_password}@${this.db_settings.db_host}/${this.db_settings.db_database}?options=project%3D${this.db_settings.db_port}`;
 
-        console.log(this.postgres_url);
-
         try {
             this.postgres_sql = postgres(this.postgres_url, {ssl: 'require'});
         } catch (error) {
-            console.log({error: error});
+            console.log(error);
         }
     }
 
@@ -53,7 +51,6 @@ export default class Postgres implements Query {
         clauses.offset = undefined;
 
         var query = this.clausesToQuerySelect(clauses);
-        console.log(query.toString());
   
         return new Promise(async (resolve, reject) => {
             await this.postgres_sql.unsafe(query).then((response) => {
@@ -72,7 +69,7 @@ export default class Postgres implements Query {
         var values = Object.values(data).map((value) => this.mapColumnValue(value));
 
         var query = `INSERT INTO ${clauses.table} (${columns.toString()}) VALUES(${values.toString()});`
-        console.log(query);
+
         var result = await this.postgres_sql.unsafe(query).then((response) => {
             return response;
         }).catch((error) => {
@@ -98,7 +95,6 @@ export default class Postgres implements Query {
 
         var query = `UPDATE ${clauses.table} SET ${dataEntries.toString()} `;
 
-        console.log(query);
         if (clauses.whereClause.length > 0) {
             query += this.combineWhereClauses(clauses.whereClause);
         };
@@ -178,14 +174,10 @@ export default class Postgres implements Query {
 
     async runQueryPromiseQuery(query: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            console.log(query);
             await this.postgres_sql.unsafe(query)
             .then((response) => {
-                // console.log(response);
-
                 resolve(response);
             }).catch((error) => {
-                // console.log(error);
                 console.log(error);
                 reject(error);
             });
